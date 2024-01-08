@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  username   String      @unique
+  password   String
+  subreddits Subreddit[]
+  posts      Post[]
+  votes      Vote[]
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String?
+  message     String
+  subreddit   Subreddit @relation(fields: [subredditId], references: [id],onDelete: Cascade )
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  subredditId String
+  votes       Vote[]
+  parent      Post?     @relation("post", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Post[]    @relation("post")
+  parentId    String?
+  CreatedAt DateTime @default(now())
+}
+
+model Subreddit {
+  id     String @id @default(uuid())
+  name   String @unique
+  description String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  posts  Post[]
+  CreatedAt DateTime @default(now())
+}
+
+model Vote {
+  id       String  @id @default(uuid())
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String 
+  isUpvote Boolean
+  @@unique([userId,postId])
+}
