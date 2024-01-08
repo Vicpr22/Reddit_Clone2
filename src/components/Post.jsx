@@ -16,7 +16,7 @@ export default async function Post({ post, isSingle }) {
         <div>{post.message}</div>
         {_user && isSingle && (
           <div className="buttons-container">
-            <EditPost post={post} />
+            <EditPost post={post} isSingle={isSingle} />
             <DeletePost post={post} />
           </div>
         )}

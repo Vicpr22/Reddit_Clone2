@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation.js";
 
-export default function EditPost({ post }) {
+export default function EditPost({ post, isSingle }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(post.title);
   const [message, setMessage] = useState(post.message);
@@ -14,7 +14,7 @@ export default function EditPost({ post }) {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (!title || !message) {
+    if (!message) {
       return setError("Please provide both title and message to submit!");
     }
 
@@ -47,11 +47,14 @@ export default function EditPost({ post }) {
         <button onClick={() => setIsEditing(true)}>Edit Post</button>
       ) : (
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+          {!isSingle && (
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          )}
+
           <textarea
             type="text"
             value={message}
